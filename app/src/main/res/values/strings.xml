@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MeNS</string>
+    <string name="gyro_lbl">Gyroscope:</string>
+    <string name="accl_lbl">Accelerometer</string>
 </resources>
