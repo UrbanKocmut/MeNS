@@ -7,6 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.Locale;
@@ -16,9 +17,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private Sensor gyroscope;
+    private boolean record = false;
     TextView accelTextView;
     TextView gyroTextView;
-    TextView infoTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         accelTextView = (TextView) findViewById(R.id.accelTextView);
         gyroTextView = (TextView) findViewById(R.id.gyroTextView);
-        infoTextView = (TextView) findViewById(R.id.infoTextView);
+    }
+
+    public void startRecording(View view) {
+        record = true;
     }
 
     @Override
@@ -48,14 +52,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        infoTextView.setText( String.valueOf(event.sensor.getType()));
-        switch ( event.sensor.getType()) {
-            case Sensor.TYPE_LINEAR_ACCELERATION:
-                accelTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f", event.values[0], event.values[1], event.values[2]));
-                break;
-            case Sensor.TYPE_GYROSCOPE:
-                gyroTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f", event.values[0], event.values[1], event.values[2]));
-                break;
+        if (record) {
+            switch (event.sensor.getType()) {
+                case Sensor.TYPE_LINEAR_ACCELERATION:
+                    accelTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f", event.values[0], event.values[1], event.values[2]));
+                    break;
+                case Sensor.TYPE_GYROSCOPE:
+                    gyroTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f", event.values[0], event.values[1], event.values[2]));
+                    break;
+            }
         }
     }
 
