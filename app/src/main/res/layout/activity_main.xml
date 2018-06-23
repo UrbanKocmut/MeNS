@@ -67,17 +67,14 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </TableRow>
 
-        <TableRow
+        <Button
+            android:id="@+id/button"
+            style="@android:style/Widget.Material.Button.Borderless"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:onClick="startRecording"
+            android:text="@string/start_btn" />
 
-            <TextView
-                android:id="@+id/infoTextView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:layout_editor_absoluteX="70dp"
-                tools:layout_editor_absoluteY="53dp" />
-        </TableRow>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
