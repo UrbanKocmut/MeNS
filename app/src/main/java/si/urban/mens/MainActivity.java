@@ -9,6 +9,7 @@ import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ public class MainActivity extends Activity implements SensorEventListener {
     TextView gyroTextView;
     ArrayList<DataChunk> gyroData;
     ArrayList<DataChunk> acclData;
+    Button startBtn;
+    TextView accLbl;
+    TextView gyroLbl;
     long startTime;
     static private final long testDuration = 20 * 1000000000L;
 
@@ -40,7 +44,14 @@ public class MainActivity extends Activity implements SensorEventListener {
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         accelTextView = (TextView) findViewById(R.id.accelTextView);
+        accelTextView.setVisibility(View.GONE);
+        accLbl = (TextView) findViewById(R.id.accLbl);
+        accLbl.setVisibility(View.GONE);
         gyroTextView = (TextView) findViewById(R.id.gyroTextView);
+        gyroTextView.setVisibility(View.GONE);
+        gyroLbl = (TextView) findViewById(R.id.gyroLbl);
+        gyroLbl.setVisibility(View.GONE);
+        startBtn = (Button) findViewById(R.id.startBtn);
         gyroData = new ArrayList<>();
         acclData = new ArrayList<>();
     }
@@ -48,6 +59,11 @@ public class MainActivity extends Activity implements SensorEventListener {
     public void startRecording(View view) {
         record = true;
         startTime = System.nanoTime();
+        startBtn.setVisibility(View.GONE);
+        accelTextView.setVisibility(View.VISIBLE);
+        gyroTextView.setVisibility(View.VISIBLE);
+        accLbl.setVisibility(View.VISIBLE);
+        gyroLbl.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -77,6 +93,12 @@ public class MainActivity extends Activity implements SensorEventListener {
                     gyroData.add(dataChunk);
                     break;
             }
+        } else {
+            startBtn.setVisibility(View.VISIBLE);
+            gyroTextView.setVisibility(View.GONE);
+            accelTextView.setVisibility(View.GONE);
+            accLbl.setVisibility(View.GONE);
+            gyroLbl.setVisibility(View.GONE);
         }
     }
 
