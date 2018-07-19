@@ -72,8 +72,25 @@
             style="@android:style/Widget.Material.Button.Borderless"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:onClick="startRecording"
             android:text="@string/start_btn" />
+
+        <Button
+            android:id="@+id/saveBtn"
+            style="@android:style/Widget.Material.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="saveToFile"
+            android:text="@string/save_btn"
+            android:visibility="gone" />
+
+        <com.jjoe64.graphview.GraphView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/graph" />
 
     </LinearLayout>
 

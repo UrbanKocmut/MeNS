@@ -1,18 +1,35 @@
 package si.urban.mens;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.Path;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Locale;
 
 public class MainActivity extends Activity implements SensorEventListener {
@@ -26,10 +43,13 @@ public class MainActivity extends Activity implements SensorEventListener {
     ArrayList<DataChunk> gyroData;
     ArrayList<DataChunk> acclData;
     Button startBtn;
+    Button saveBtn;
     TextView accLbl;
     TextView gyroLbl;
     long startTime;
+    private final String FILE_NAME = "MesurementData";
     static private final long testDuration = 20 * 1000000000L;
+    private final int PERMISSIN_CODE = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +59,33 @@ public class MainActivity extends Activity implements SensorEventListener {
         System.out.println("INIT DONE");
     }
 
-    private void init(){
+    private void init() {
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        PERMISSIN_CODE);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            // Permission has already been granted
+        }
+
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -52,18 +98,68 @@ public class MainActivity extends Activity implements SensorEventListener {
         gyroLbl = (TextView) findViewById(R.id.gyroLbl);
         gyroLbl.setVisibility(View.GONE);
         startBtn = (Button) findViewById(R.id.startBtn);
+        saveBtn = (Button) findViewById(R.id.saveBtn);
         gyroData = new ArrayList<>();
         acclData = new ArrayList<>();
+
+        GraphView graph = (GraphView) findViewById(R.id.graph);
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
+                new DataPoint(0, 1),
+                new DataPoint(1, 5),
+                new DataPoint(2, 3),
+                new DataPoint(3, 2),
+                new DataPoint(4, 6)
+        });
+        graph.addSeries(series);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIN_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
     }
 
     public void startRecording(View view) {
         record = true;
         startTime = System.nanoTime();
         startBtn.setVisibility(View.GONE);
+        saveBtn.setVisibility(View.GONE);
         accelTextView.setVisibility(View.VISIBLE);
         gyroTextView.setVisibility(View.VISIBLE);
         accLbl.setVisibility(View.VISIBLE);
         gyroLbl.setVisibility(View.VISIBLE);
+    }
+
+    public void saveToFile(View view) {
+        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File saveData = new File(path, FILE_NAME + System.currentTimeMillis() + ".txt");
+        try (PrintWriter printWriter = new PrintWriter(saveData)) {
+            printWriter.write("aX;aY;aZ;at;gX;gY;gZ;gt\n");
+            Iterator<DataChunk> accIt = acclData.iterator();
+            Iterator<DataChunk> gyroIt = gyroData.iterator();
+            while (accIt.hasNext() && gyroIt.hasNext()) {
+                DataChunk accDataChunk = accIt.next();
+                DataChunk gyroDataChunk = gyroIt.next();
+                printWriter.append(accDataChunk.X + ";" + accDataChunk.Y + ";" + accDataChunk.Z + ";" + accDataChunk.timestamp + ";" + gyroDataChunk.X + ";" + gyroDataChunk.Y + ";" + gyroDataChunk.Z + ";" + gyroDataChunk.timestamp + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -85,7 +181,7 @@ public class MainActivity extends Activity implements SensorEventListener {
             DataChunk dataChunk = new DataChunk(event.values, System.nanoTime());
             switch (event.sensor.getType()) {
                 case Sensor.TYPE_LINEAR_ACCELERATION:
-                    accelTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f",event.values[0], event.values[1], event.values[2]));
+                    accelTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f", event.values[0], event.values[1], event.values[2]));
                     acclData.add(dataChunk);
                     break;
                 case Sensor.TYPE_GYROSCOPE:
@@ -94,6 +190,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                     break;
             }
         } else {
+            saveBtn.setVisibility(View.VISIBLE);
             startBtn.setVisibility(View.VISIBLE);
             gyroTextView.setVisibility(View.GONE);
             accelTextView.setVisibility(View.GONE);
@@ -107,22 +204,22 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     }
 
-    class DataChunk{
+    class DataChunk {
         float X, Y, Z;
-        long ts;
+        long timestamp;
 
-        public DataChunk(float x, float y, float z, long timestamp){
+        public DataChunk(float x, float y, float z, long timestamp) {
             X = x;
             Y = y;
             Z = z;
-            ts = timestamp;
+            this.timestamp = timestamp;
         }
 
-        public DataChunk(float [] data, long timestamp){
+        DataChunk(float[] data, long timestamp) {
             X = data[0];
             Y = data[1];
             Z = data[2];
-            ts = timestamp;
+            this.timestamp = timestamp;
         }
     }
 }
