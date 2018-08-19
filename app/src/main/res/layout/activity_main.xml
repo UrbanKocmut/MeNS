@@ -90,7 +90,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:id="@+id/graph" />
+            android:visibility="gone"
+            android:id="@+id/accGraph" />
+
+        <com.jjoe64.graphview.GraphView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="gone"
+            android:id="@+id/gyroGraph" />
 
     </LinearLayout>
 

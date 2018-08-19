@@ -4,28 +4,25 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Path;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -47,9 +44,21 @@ public class MainActivity extends Activity implements SensorEventListener {
     TextView accLbl;
     TextView gyroLbl;
     long startTime;
-    private final String FILE_NAME = "MesurementData";
+    private final String SAVE_FILE_NAME = "MesurementData";
     static private final long testDuration = 20 * 1000000000L;
     private final int PERMISSIN_CODE = 10;
+
+    GraphView accGraph;
+    GraphView gyroGraph;
+
+    private final int MAX_DATA_POINTS = 1000;
+    LineGraphSeries<DataPoint> accXSeries;
+    LineGraphSeries<DataPoint> accYSeries;
+    LineGraphSeries<DataPoint> accZSeries;
+    LineGraphSeries<DataPoint> gyroXSeries;
+    LineGraphSeries<DataPoint> gyroYSeries;
+    LineGraphSeries<DataPoint> gyroZSeries;
+    private long I = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,18 +108,55 @@ public class MainActivity extends Activity implements SensorEventListener {
         gyroLbl.setVisibility(View.GONE);
         startBtn = (Button) findViewById(R.id.startBtn);
         saveBtn = (Button) findViewById(R.id.saveBtn);
+
         gyroData = new ArrayList<>();
         acclData = new ArrayList<>();
 
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 1),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3),
-                new DataPoint(3, 2),
-                new DataPoint(4, 6)
-        });
-        graph.addSeries(series);
+        accXSeries = new LineGraphSeries<>();
+        accYSeries = new LineGraphSeries<>();
+        accZSeries = new LineGraphSeries<>();
+
+        accXSeries.setColor(Color.RED);
+        accYSeries.setColor(Color.GREEN);
+        accZSeries.setColor(Color.BLUE);
+
+        gyroXSeries = new LineGraphSeries<>();
+        gyroYSeries = new LineGraphSeries<>();
+        gyroZSeries = new LineGraphSeries<>();
+
+        gyroXSeries.setColor(Color.RED);
+        gyroYSeries.setColor(Color.GREEN);
+        gyroZSeries.setColor(Color.BLUE);
+
+
+        accGraph = (GraphView) findViewById(R.id.accGraph);
+        gyroGraph = (GraphView) findViewById(R.id.gyroGraph);
+
+        Viewport vp = accGraph.getViewport();
+        vp.setXAxisBoundsManual(true);
+        vp.setMinX(0);
+        vp.setMaxX(MAX_DATA_POINTS);
+        vp.setMaxY(50d);
+        vp.setMinY(-50d);
+        vp.setXAxisBoundsManual(true);
+        vp.setYAxisBoundsManual(true);
+
+        vp = gyroGraph.getViewport();
+        vp.setXAxisBoundsManual(true);
+        vp.setMinX(0);
+        vp.setMaxX(MAX_DATA_POINTS);
+        vp.setMaxY(50d);
+        vp.setMinY(-50d);
+        vp.setXAxisBoundsManual(true);
+        vp.setYAxisBoundsManual(true);
+
+        accGraph.addSeries(accXSeries);
+        accGraph.addSeries(accYSeries);
+        accGraph.addSeries(accZSeries);
+
+        gyroGraph.addSeries(gyroXSeries);
+        gyroGraph.addSeries(gyroYSeries);
+        gyroGraph.addSeries(gyroZSeries);
     }
 
     @Override
@@ -136,7 +182,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     public void startRecording(View view) {
         record = true;
-        startTime = System.nanoTime();
+        startTime = System.currentTimeMillis();
         startBtn.setVisibility(View.GONE);
         saveBtn.setVisibility(View.GONE);
         accelTextView.setVisibility(View.VISIBLE);
@@ -147,7 +193,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     public void saveToFile(View view) {
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File saveData = new File(path, FILE_NAME + System.currentTimeMillis() + ".txt");
+        File saveData = new File(path, SAVE_FILE_NAME + System.currentTimeMillis() + ".txt");
         try (PrintWriter printWriter = new PrintWriter(saveData)) {
             printWriter.write("aX;aY;aZ;at;gX;gY;gZ;gt\n");
             Iterator<DataChunk> accIt = acclData.iterator();
@@ -177,12 +223,15 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (record && (System.nanoTime() - startTime) < testDuration) {
-            DataChunk dataChunk = new DataChunk(event.values, System.nanoTime());
+        if (record && (System.currentTimeMillis() - startTime) < testDuration) {
+            DataChunk dataChunk = new DataChunk(event.values, System.currentTimeMillis() - startTime);
             switch (event.sensor.getType()) {
                 case Sensor.TYPE_LINEAR_ACCELERATION:
                     accelTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f", event.values[0], event.values[1], event.values[2]));
                     acclData.add(dataChunk);
+                    accXSeries.appendData(new DataPoint(dataChunk.timestamp,dataChunk.X),true,MAX_DATA_POINTS,false);   //mogoce ni pri vseh treba scrollToEnd dat true, samo na zadnjem?
+                    accYSeries.appendData(new DataPoint(dataChunk.timestamp,dataChunk.Y),true,MAX_DATA_POINTS,false);
+                    accZSeries.appendData(new DataPoint(dataChunk.timestamp,dataChunk.Z),true,MAX_DATA_POINTS,false);
                     break;
                 case Sensor.TYPE_GYROSCOPE:
                     gyroTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f", event.values[0], event.values[1], event.values[2]));
