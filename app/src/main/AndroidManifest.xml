@@ -18,7 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PinActivity"></activity>
+        <activity android:name=".PinActivity" />
+        <activity android:name=".TestPickerActivity"></activity>
     </application>
 
 </manifest>
