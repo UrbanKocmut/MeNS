@@ -45,7 +45,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     TextView gyroLbl;
     long startTime;
     private final String SAVE_FILE_NAME = "MesurementData";
-    static private final long testDuration = 20 * 1000000000L;
+    static private final long testDuration = 20 * 1000L;
     private final int PERMISSIN_CODE = 10;
 
     GraphView accGraph;
@@ -68,50 +68,12 @@ public class MainActivity extends Activity implements SensorEventListener {
         System.out.println("INIT DONE");
     }
 
-    private void init() {
-        // Here, thisActivity is the current activity
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+    private void getGraphs() {
+        accGraph = (GraphView) findViewById(R.id.accGraph);
+        gyroGraph = (GraphView) findViewById(R.id.gyroGraph);
+    }
 
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        PERMISSIN_CODE);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        } else {
-            // Permission has already been granted
-        }
-
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        accelTextView = (TextView) findViewById(R.id.accelTextView);
-        accelTextView.setVisibility(View.GONE);
-        accLbl = (TextView) findViewById(R.id.accLbl);
-        accLbl.setVisibility(View.GONE);
-        gyroTextView = (TextView) findViewById(R.id.gyroTextView);
-        gyroTextView.setVisibility(View.GONE);
-        gyroLbl = (TextView) findViewById(R.id.gyroLbl);
-        gyroLbl.setVisibility(View.GONE);
-        startBtn = (Button) findViewById(R.id.startBtn);
-        saveBtn = (Button) findViewById(R.id.saveBtn);
-
-        gyroData = new ArrayList<>();
-        acclData = new ArrayList<>();
-
+    private void initGraph() {
         accXSeries = new LineGraphSeries<>();
         accYSeries = new LineGraphSeries<>();
         accZSeries = new LineGraphSeries<>();
@@ -127,10 +89,6 @@ public class MainActivity extends Activity implements SensorEventListener {
         gyroXSeries.setColor(Color.RED);
         gyroYSeries.setColor(Color.GREEN);
         gyroZSeries.setColor(Color.BLUE);
-
-
-        accGraph = (GraphView) findViewById(R.id.accGraph);
-        gyroGraph = (GraphView) findViewById(R.id.gyroGraph);
 
         Viewport vp = accGraph.getViewport();
         vp.setXAxisBoundsManual(true);
@@ -159,6 +117,43 @@ public class MainActivity extends Activity implements SensorEventListener {
         gyroGraph.addSeries(gyroZSeries);
     }
 
+    private void resetGraph() {
+        accGraph.removeAllSeries();
+        gyroGraph.removeAllSeries();
+    }
+
+    private void initStorage() {
+        gyroData = new ArrayList<>();
+        acclData = new ArrayList<>();
+    }
+
+    private void getPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIN_CODE);
+        }
+    }
+
+    private void init() {
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        accelTextView = (TextView) findViewById(R.id.accelTextView);
+        accelTextView.setVisibility(View.GONE);
+        accLbl = (TextView) findViewById(R.id.accLbl);
+        accLbl.setVisibility(View.GONE);
+        gyroTextView = (TextView) findViewById(R.id.gyroTextView);
+        gyroTextView.setVisibility(View.GONE);
+        gyroLbl = (TextView) findViewById(R.id.gyroLbl);
+        gyroLbl.setVisibility(View.GONE);
+        startBtn = (Button) findViewById(R.id.startBtn);
+        saveBtn = (Button) findViewById(R.id.saveBtn);
+
+
+        getPermission();
+        getGraphs();
+        initStorage();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -181,6 +176,9 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     public void startRecording(View view) {
+        initStorage();
+        resetGraph();
+        initGraph();
         record = true;
         startTime = System.currentTimeMillis();
         startBtn.setVisibility(View.GONE);
@@ -189,6 +187,8 @@ public class MainActivity extends Activity implements SensorEventListener {
         gyroTextView.setVisibility(View.VISIBLE);
         accLbl.setVisibility(View.VISIBLE);
         gyroLbl.setVisibility(View.VISIBLE);
+        accGraph.setVisibility(View.VISIBLE);
+        gyroGraph.setVisibility(View.VISIBLE);
     }
 
     public void saveToFile(View view) {
@@ -211,8 +211,8 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
@@ -223,28 +223,37 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (record && (System.currentTimeMillis() - startTime) < testDuration) {
+        if (!record)
+            return;
+
+        if ((System.currentTimeMillis() - startTime) < testDuration) {
             DataChunk dataChunk = new DataChunk(event.values, System.currentTimeMillis() - startTime);
             switch (event.sensor.getType()) {
                 case Sensor.TYPE_LINEAR_ACCELERATION:
                     accelTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f", event.values[0], event.values[1], event.values[2]));
                     acclData.add(dataChunk);
-                    accXSeries.appendData(new DataPoint(dataChunk.timestamp,dataChunk.X),true,MAX_DATA_POINTS,false);   //mogoce ni pri vseh treba scrollToEnd dat true, samo na zadnjem?
-                    accYSeries.appendData(new DataPoint(dataChunk.timestamp,dataChunk.Y),true,MAX_DATA_POINTS,false);
-                    accZSeries.appendData(new DataPoint(dataChunk.timestamp,dataChunk.Z),true,MAX_DATA_POINTS,false);
+                    accXSeries.appendData(new DataPoint(dataChunk.timestamp, dataChunk.X), true, MAX_DATA_POINTS, false);   //mogoce ni pri vseh treba scrollToEnd dat true, samo na zadnjem?
+                    accYSeries.appendData(new DataPoint(dataChunk.timestamp, dataChunk.Y), true, MAX_DATA_POINTS, false);
+                    accZSeries.appendData(new DataPoint(dataChunk.timestamp, dataChunk.Z), true, MAX_DATA_POINTS, false);
                     break;
                 case Sensor.TYPE_GYROSCOPE:
                     gyroTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f", event.values[0], event.values[1], event.values[2]));
                     gyroData.add(dataChunk);
+                    gyroXSeries.appendData(new DataPoint(dataChunk.timestamp, dataChunk.X), true, MAX_DATA_POINTS, false);   //mogoce ni pri vseh treba scrollToEnd dat true, samo na zadnjem?
+                    gyroYSeries.appendData(new DataPoint(dataChunk.timestamp, dataChunk.Y), true, MAX_DATA_POINTS, false);
+                    gyroZSeries.appendData(new DataPoint(dataChunk.timestamp, dataChunk.Z), true, MAX_DATA_POINTS, false);
                     break;
             }
-        } else {
+        } else if ((System.currentTimeMillis() - startTime) >= testDuration) {
+            record = false;
             saveBtn.setVisibility(View.VISIBLE);
             startBtn.setVisibility(View.VISIBLE);
             gyroTextView.setVisibility(View.GONE);
             accelTextView.setVisibility(View.GONE);
             accLbl.setVisibility(View.GONE);
             gyroLbl.setVisibility(View.GONE);
+            accGraph.setVisibility(View.GONE);
+            gyroGraph.setVisibility(View.GONE);
         }
     }
 
