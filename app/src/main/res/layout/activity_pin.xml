@@ -25,7 +25,7 @@
             android:textSize="30sp" />
 
         <EditText
-            android:id="@+id/pinEntry"
+            android:id="@+id/pinEntryEt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
@@ -35,13 +35,14 @@
             android:inputType="numberDecimal"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.Material"
-            tools:text="123123" />
+            android:textSize="30sp" />
 
         <Button
             android:id="@+id/confirmPinBtn"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_margin="25dp"
+            android:onClick="switchToTest"
             android:text="@string/confirm"
             android:textSize="30sp" />
 
