@@ -3,4 +3,17 @@
     <string name="gyro_lbl">Gyroscope:</string>
     <string name="accl_lbl">Accelerometer</string>
     <string name="start_btn">START</string>
+    <string name="save_btn">SAVE DATA</string>
+    <string name="enter_pin">ENTER PIN</string>
+    <string name="confirm">CONFIRM</string>
+    <string name="test1L">1</string>
+    <string name="test1R">2</string>
+    <string name="test2L">3</string>
+    <string name="test2R">4</string>
+    <string name="test3L">5</string>
+    <string name="test3R">6</string>
+
+    <string name="title_activity_test">TestActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
