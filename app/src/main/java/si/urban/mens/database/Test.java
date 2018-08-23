@@ -16,4 +16,13 @@ public class Test {
         this.id = id;
         this.timestamp = timestamp;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    @NonNull
+    public long getTimestamp() {
+        return timestamp;
+    }
 }

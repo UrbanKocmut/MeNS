@@ -39,12 +39,13 @@ public class Reading {
     public float Z;
 
 
-    public Reading(@NonNull int measurementId, @NonNull int sensorTypeId, @NonNull long timestamp, @NonNull float x, @NonNull float y, @NonNull float z) {
+    public Reading(@NonNull int measurementId, @NonNull int sensorTypeId, @NonNull long timestamp, @NonNull float X, @NonNull float Y, @NonNull float Z) {
+        this.id = 0;
         this.measurementId = measurementId;
         this.sensorTypeId = sensorTypeId;
         this.timestamp = timestamp;
-        X = x;
-        Y = y;
-        Z = z;
+        this.X = X;
+        this.Y = Y;
+        this.Z = Z;
     }
 }

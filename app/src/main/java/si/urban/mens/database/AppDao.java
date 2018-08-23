@@ -7,6 +7,7 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 import android.hardware.Sensor;
+import android.media.Rating;
 
 import java.util.Collection;
 import java.util.List;
@@ -62,13 +63,13 @@ public interface AppDao {
     public Measurement[] loadAllMeasurementsForTest(int testId);
 
     @Query("SELECT * FROM readings WHERE measurement_id == :measurementId")
-    public Measurement[] loadAllReadingsForMeasurement(int measurementId);
+    public Reading[] loadAllReadingsForMeasurement(int measurementId);
 
     @Query("SELECT * FROM readings WHERE measurement_id == :measurementId AND sensor_type_id == " + Sensor.TYPE_LINEAR_ACCELERATION)
-    public Measurement[] loadAllAccelerometerReadingsForMeasurement(int measurementId);
+    public Reading[] loadAllAccelerometerReadingsForMeasurement(int measurementId);
 
     @Query("SELECT * FROM readings WHERE measurement_id == :measurementId AND sensor_type_id == " + Sensor.TYPE_GYROSCOPE)
-    public Measurement[] loadAllGyroscopeReadingsForMeasurement(int measurementId);
+    public Reading[] loadAllGyroscopeReadingsForMeasurement(int measurementId);
 
 
 }
