@@ -3,6 +3,7 @@ package si.urban.mens;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.graphics.Color;
 import android.hardware.Sensor;
@@ -21,8 +22,12 @@ import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import si.urban.mens.database.AppDatabase;
+import si.urban.mens.database.Reading;
 
 public class TestActivity extends Activity implements SensorEventListener {
 
@@ -49,8 +54,15 @@ public class TestActivity extends Activity implements SensorEventListener {
     LineGraphSeries<DataPoint> gyroYSeries;
     LineGraphSeries<DataPoint> gyroZSeries;
 
-    private boolean record =false;
+    ArrayDeque<Reading> readings;
 
+    private boolean record = false;
+
+    AppDatabase db;
+
+    private void initDb() {
+        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "appData").build();
+    }
 
     private void initGraphs() {
         accXSeries = new LineGraphSeries<>();
@@ -102,7 +114,8 @@ public class TestActivity extends Activity implements SensorEventListener {
 
         setContentView(R.layout.activity_test);
 
-
+        initDb();
+        readings = new ArrayDeque<>();
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
@@ -119,7 +132,6 @@ public class TestActivity extends Activity implements SensorEventListener {
         initGraphs();
         startRecording();
 
-
     }
 
     private void startRecording() {
@@ -128,6 +140,7 @@ public class TestActivity extends Activity implements SensorEventListener {
 
     private void stopRecording() {
         record = false;
+        db.appDao().insertReadings(readings);
     }
 
     @Override
@@ -152,9 +165,11 @@ public class TestActivity extends Activity implements SensorEventListener {
             switch (event.sensor.getType()) {
                 case Sensor.TYPE_LINEAR_ACCELERATION:
                     accelTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f", event.values[0], event.values[1], event.values[2]));
+                    readings.add(new Reading(0,Sensor.TYPE_LINEAR_ACCELERATION,System.currentTimeMillis(),event.values[0],event.values[1],event.values[2]));
                     break;
                 case Sensor.TYPE_GYROSCOPE:
                     gyroTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f", event.values[0], event.values[1], event.values[2]));
+                    readings.add(new Reading(0,Sensor.TYPE_GYROSCOPE,System.currentTimeMillis(),event.values[0],event.values[1],event.values[2]));
                     break;
             }
         } else {
