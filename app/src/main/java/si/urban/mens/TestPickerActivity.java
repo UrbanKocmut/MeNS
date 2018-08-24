@@ -2,8 +2,12 @@ package si.urban.mens;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+
+import si.urban.mens.database.AppDatabase;
+import si.urban.mens.database.Measurement;
 
 public class TestPickerActivity extends Activity {
 
@@ -14,6 +18,39 @@ public class TestPickerActivity extends Activity {
     }
 
     public void switchToTest(View view) {
+        int measurementTypeId = 0;
+        switch (view.getId()){
+            case R.id.test1Lbtn:
+                measurementTypeId = 0;
+                break;
+            case R.id.test1Rbtn:
+                measurementTypeId = 1;
+                break;
+            case R.id.test2Lbtn:
+                measurementTypeId = 2;
+                break;
+            case R.id.test2Rbtn:
+                measurementTypeId = 3;
+                break;
+            case R.id.test3Lbtn:
+                measurementTypeId = 4;
+                break;
+            case R.id.test3Rbtn:
+                measurementTypeId = 5;
+                break;
+        }
+        SharedPreferences sp = getSharedPreferences("shared_pref",MODE_PRIVATE);
+        int testId = sp.getInt("testId",-1);
+        if(testId == 0){
+            throw new RuntimeException("NO TEST ID");
+        }
+        Measurement measurement = new Measurement(0,testId,measurementTypeId);
+
+        AppDatabase db = AppDatabase.getInstance(getApplicationContext());
+        long measurementId = db.appDao().insertMeasurement(measurement);
+
+        sp.edit().putLong("measurementId",measurementId).apply();
+
         Intent intent = new Intent(this, TestActivity.class);
         startActivity(intent);
     }

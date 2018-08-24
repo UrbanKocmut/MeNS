@@ -1,20 +1,15 @@
 package si.urban.mens;
 
-import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.Activity;
-import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
@@ -56,13 +51,12 @@ public class TestActivity extends Activity implements SensorEventListener {
 
     ArrayDeque<Reading> readings;
 
+    SharedPreferences sp;
+
+    private int measurementId;
+    private int testId;
+
     private boolean record = false;
-
-    AppDatabase db;
-
-    private void initDb() {
-        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "appData").build();
-    }
 
     private void initGraphs() {
         accXSeries = new LineGraphSeries<>();
@@ -114,7 +108,6 @@ public class TestActivity extends Activity implements SensorEventListener {
 
         setContentView(R.layout.activity_test);
 
-        initDb();
         readings = new ArrayDeque<>();
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -127,9 +120,15 @@ public class TestActivity extends Activity implements SensorEventListener {
         accGraph = (GraphView) findViewById(R.id.activity_test_accGraph);
         gyroGraph = (GraphView) findViewById(R.id.activity_test_gyroGraph);
 
-        startTime = System.currentTimeMillis();
-
+        sp = getSharedPreferences("shared_pref", MODE_PRIVATE);
+        measurementId = sp.getInt("measurementId", -1);
+        if (testId == -1 || measurementId == -1) {
+            throw new RuntimeException("NO MEASUREMENT ID ");
+        }
         initGraphs();
+
+
+        startTime = System.currentTimeMillis();
         startRecording();
 
     }
@@ -140,7 +139,15 @@ public class TestActivity extends Activity implements SensorEventListener {
 
     private void stopRecording() {
         record = false;
+        AppDatabase db = AppDatabase.getInstance(getApplicationContext());
         db.appDao().insertReadings(readings);
+        switchToTestPicker();
+
+    }
+
+    private void switchToTestPicker(){
+        Intent intent = new Intent(this, TestActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -162,14 +169,21 @@ public class TestActivity extends Activity implements SensorEventListener {
             return;
 
         if ((System.currentTimeMillis() - startTime) < testDuration) {
+            long timestamp = System.currentTimeMillis();
             switch (event.sensor.getType()) {
                 case Sensor.TYPE_LINEAR_ACCELERATION:
                     accelTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f", event.values[0], event.values[1], event.values[2]));
-                    readings.add(new Reading(0,Sensor.TYPE_LINEAR_ACCELERATION,System.currentTimeMillis(),event.values[0],event.values[1],event.values[2]));
+                    readings.add(new Reading(measurementId, Sensor.TYPE_LINEAR_ACCELERATION, timestamp, event.values[0], event.values[1], event.values[2]));
+                    accXSeries.appendData(new DataPoint(timestamp, event.values[0]), true, MAX_DATA_POINTS, false);   //mogoce ni pri vseh treba scrollToEnd dat true, samo na zadnjem?
+                    accYSeries.appendData(new DataPoint(timestamp, event.values[1]), true, MAX_DATA_POINTS, false);
+                    accZSeries.appendData(new DataPoint(timestamp, event.values[2]), true, MAX_DATA_POINTS, false);
                     break;
                 case Sensor.TYPE_GYROSCOPE:
                     gyroTextView.setText(String.format(Locale.getDefault(), "X:%.2f,Y:%.2f,Z:%.2f", event.values[0], event.values[1], event.values[2]));
-                    readings.add(new Reading(0,Sensor.TYPE_GYROSCOPE,System.currentTimeMillis(),event.values[0],event.values[1],event.values[2]));
+                    readings.add(new Reading(measurementId, Sensor.TYPE_GYROSCOPE, System.currentTimeMillis(), event.values[0], event.values[1], event.values[2]));
+                    gyroXSeries.appendData(new DataPoint(timestamp, event.values[0]), true, MAX_DATA_POINTS, false);   //mogoce ni pri vseh treba scrollToEnd dat true, samo na zadnjem?
+                    gyroYSeries.appendData(new DataPoint(timestamp, event.values[1]), true, MAX_DATA_POINTS, false);
+                    gyroZSeries.appendData(new DataPoint(timestamp, event.values[2]), true, MAX_DATA_POINTS, false);
                     break;
             }
         } else {

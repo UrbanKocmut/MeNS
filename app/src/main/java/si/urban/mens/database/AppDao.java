@@ -26,7 +26,7 @@ public interface AppDao {
     public void insertMeasurementTypes(MeasurementType... measurementTypes);
 
     @Insert
-    public void insertMeasurements(Measurement... measurements);
+    public long insertMeasurement(Measurement measurements);
 
     @Insert
     public void insertMeasurements(Collection<Measurement> measurements);
