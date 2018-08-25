@@ -25,6 +25,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_test"
             android:theme="@style/FullscreenTheme" />
+        <activity android:name=".DataPickerActivity"></activity>
     </application>
 
 </manifest>

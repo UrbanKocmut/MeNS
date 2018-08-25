@@ -51,6 +51,7 @@ public class TestPickerActivity extends Activity {
 
         sp.edit().putLong("measurementId",measurementId).apply();
 
+
         Intent intent = new Intent(this, TestActivity.class);
         startActivity(intent);
     }
