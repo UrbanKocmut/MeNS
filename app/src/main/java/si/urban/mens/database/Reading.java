@@ -20,7 +20,7 @@ public class Reading {
 
     @ColumnInfo(name = "measurement_id")
     @NonNull
-    public int measurementId;
+    public long measurementId;
 
     @ColumnInfo(name = "sensor_type_id")
     @NonNull
@@ -39,7 +39,7 @@ public class Reading {
     public float Z;
 
 
-    public Reading(@NonNull int measurementId, @NonNull int sensorTypeId, @NonNull long timestamp, @NonNull float X, @NonNull float Y, @NonNull float Z) {
+    public Reading(@NonNull long measurementId, @NonNull int sensorTypeId, @NonNull long timestamp, @NonNull float X, @NonNull float Y, @NonNull float Z) {
         this.id = 0;
         this.measurementId = measurementId;
         this.sensorTypeId = sensorTypeId;

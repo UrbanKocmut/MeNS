@@ -53,8 +53,7 @@ public class TestActivity extends Activity implements SensorEventListener {
 
     SharedPreferences sp;
 
-    private int measurementId;
-    private int testId;
+    private long measurementId;
 
     private boolean record = false;
 
@@ -121,8 +120,8 @@ public class TestActivity extends Activity implements SensorEventListener {
         gyroGraph = (GraphView) findViewById(R.id.activity_test_gyroGraph);
 
         sp = getSharedPreferences("shared_pref", MODE_PRIVATE);
-        measurementId = sp.getInt("measurementId", -1);
-        if (testId == -1 || measurementId == -1) {
+        measurementId = sp.getLong("measurementId", -1);
+        if (measurementId == -1) {
             throw new RuntimeException("NO MEASUREMENT ID ");
         }
         initGraphs();
@@ -146,7 +145,7 @@ public class TestActivity extends Activity implements SensorEventListener {
     }
 
     private void switchToTestPicker(){
-        Intent intent = new Intent(this, TestActivity.class);
+        Intent intent = new Intent(this, TestPickerActivity.class);
         startActivity(intent);
     }
 

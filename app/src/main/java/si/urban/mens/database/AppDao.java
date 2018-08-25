@@ -16,28 +16,28 @@ import java.util.List;
 public interface AppDao {
 
     //INSERTS
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertTests(Test... tests);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertSensorTypes(SensorType... sensorTypes);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertMeasurementTypes(MeasurementType... measurementTypes);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public long insertMeasurement(Measurement measurements);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertMeasurements(Collection<Measurement> measurements);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertReadings(Reading... readings);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertReadings(Collection<Reading> readings);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertMeasurementAndReadings(Measurement measurement, List<Reading> readings);
 
     //UPDATES
