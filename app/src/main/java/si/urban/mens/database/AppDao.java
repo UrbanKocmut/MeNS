@@ -16,7 +16,7 @@ import java.util.List;
 public interface AppDao {
 
     //INSERTS
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     public void insertTests(Test... tests);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -60,16 +60,16 @@ public interface AppDao {
     public Test[] loadAllTests();
 
     @Query("SELECT * FROM measurements WHERE test_id == :testId")
-    public Measurement[] loadAllMeasurementsForTest(int testId);
+    public Measurement[] loadAllMeasurementsForTest(long testId);
 
     @Query("SELECT * FROM readings WHERE measurement_id == :measurementId")
-    public Reading[] loadAllReadingsForMeasurement(int measurementId);
+    public Reading[] loadAllReadingsForMeasurement(long measurementId);
 
     @Query("SELECT * FROM readings WHERE measurement_id == :measurementId AND sensor_type_id == " + Sensor.TYPE_LINEAR_ACCELERATION)
-    public Reading[] loadAllAccelerometerReadingsForMeasurement(int measurementId);
+    public Reading[] loadAllAccelerometerReadingsForMeasurement(long measurementId);
 
     @Query("SELECT * FROM readings WHERE measurement_id == :measurementId AND sensor_type_id == " + Sensor.TYPE_GYROSCOPE)
-    public Reading[] loadAllGyroscopeReadingsForMeasurement(int measurementId);
+    public Reading[] loadAllGyroscopeReadingsForMeasurement(long measurementId);
 
 
 }

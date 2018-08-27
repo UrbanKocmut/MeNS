@@ -3,16 +3,11 @@ package si.urban.mens;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import java.lang.ref.WeakReference;
-
-import si.urban.mens.database.AppDao;
 import si.urban.mens.database.AppDatabase;
 import si.urban.mens.database.Test;
 
@@ -32,7 +27,7 @@ public class PinActivity extends Activity {
                     switch (keyCode) {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
                         case KeyEvent.KEYCODE_ENTER:
-                            switchToTest(v);
+                            switchToMainMenu(v);
                             return true;
                         default:
                             break;
@@ -44,7 +39,7 @@ public class PinActivity extends Activity {
 
     }
 
-    public void switchToTest(View view) {
+    public void switchToMainMenu(View view) {
 
         String PIN = pinEntryEt.getText().toString();
         if(PIN.equals(""))
@@ -54,10 +49,10 @@ public class PinActivity extends Activity {
         Test test = new Test(Integer.valueOf(PIN),System.currentTimeMillis());
         db.appDao().insertTests(test);
         SharedPreferences.Editor editor = getSharedPreferences("shared_pref",MODE_PRIVATE).edit();
-        editor.putInt("testId",Integer.valueOf(PIN));
+        editor.putLong("testId",Integer.valueOf(PIN));
         editor.apply();
 
-        Intent intent = new Intent(this, TestPickerActivity.class);
+        Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
     }
 

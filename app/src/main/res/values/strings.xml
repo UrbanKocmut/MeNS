@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">MeNS</string>
     <string name="gyro_lbl">Gyroscope:</string>
-    <string name="accl_lbl">Accelerometer</string>
+    <string name="accl_lbl">Accelerometer:</string>
     <string name="start_btn">START</string>
     <string name="save_btn">SAVE DATA</string>
     <string name="enter_pin">ENTER PIN</string>
@@ -16,6 +16,13 @@
     <string name="done_lbl">DONE</string>
     <string name="send_btn">SEND</string>
     <string name="delete_btn">DELETE</string>
+
+    <string name="data_btn">DATA</string>
+    <string name="home_btn">HOME</string>
+
+    <string name="type_lbl">TYPE:</string>
+    <string name="date_lvl">DATE:</string>
+
 
     <string name="creating_db">Creating database</string>
     <string name="title_activity_test">TestActivity</string>

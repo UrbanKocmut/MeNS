@@ -11,7 +11,7 @@ import android.support.annotation.NonNull;
 import java.util.concurrent.Executors;
 
 @Database(entities = {Measurement.class, MeasurementType.class, Reading.class, SensorType.class, Test.class},
-        version = 1)
+        version = 3)
 public abstract class AppDatabase extends RoomDatabase{
     public abstract AppDao appDao();
 
@@ -24,6 +24,32 @@ public abstract class AppDatabase extends RoomDatabase{
             INSTANCE = buildDatabase(context);
         }
         return INSTANCE;
+    }
+
+    public synchronized static void fillDatabase(){
+        if (INSTANCE != null) {
+            INSTANCE.appDao().insertMeasurementTypes(MeasurementType.populateData());
+            INSTANCE.appDao().insertSensorTypes(SensorType.populateData());
+        } else {
+            throw new NullPointerException("Database doesnt exist!");
+        }
+    }
+
+    public synchronized static void clearDatabase(){
+        if (INSTANCE != null) {
+            INSTANCE.clearAllTables();
+        } else {
+            throw new NullPointerException("Database doesnt exist!");
+        }
+    }
+
+    public synchronized static void resetDatabase(){
+        if (INSTANCE != null) {
+            INSTANCE.clearAllTables();
+            fillDatabase();
+        } else {
+            throw new NullPointerException("Database doesnt exist!");
+        }
     }
 
     private static AppDatabase buildDatabase(final Context context) {

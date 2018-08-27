@@ -21,6 +21,7 @@
             android:layout_weight="1">
 
             <android.support.v7.widget.RecyclerView
+                android:id="@+id/datarv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </TableRow>
@@ -31,17 +32,26 @@
             android:layout_weight="10">
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/sendbtn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="@string/send_btn" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/homebtn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:onClick="switchToMainMenu"
+                android:text="@string/home_btn" />
+
+            <Button
+                android:id="@+id/deletebtn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="deleteElements"
                 android:text="@string/delete_btn" />
         </TableRow>
     </LinearLayout>

@@ -40,11 +40,11 @@ public class TestPickerActivity extends Activity {
                 break;
         }
         SharedPreferences sp = getSharedPreferences("shared_pref",MODE_PRIVATE);
-        int testId = sp.getInt("testId",-1);
-        if(testId == 0){
+        long testId = sp.getLong("testId",-1);
+        if(testId == -1){
             throw new RuntimeException("NO TEST ID");
         }
-        Measurement measurement = new Measurement(0,testId,measurementTypeId);
+        Measurement measurement = new Measurement(0,testId,measurementTypeId,System.currentTimeMillis());
 
         AppDatabase db = AppDatabase.getInstance(getApplicationContext());
         long measurementId = db.appDao().insertMeasurement(measurement);
@@ -53,6 +53,11 @@ public class TestPickerActivity extends Activity {
 
 
         Intent intent = new Intent(this, TestActivity.class);
+        startActivity(intent);
+    }
+
+    public void switchToMainMenu(View view){
+        Intent intent = new Intent(this, MainMenuActivity.class);
         startActivity(intent);
     }
 }

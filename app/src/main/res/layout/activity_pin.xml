@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_margin="25dp"
-            android:onClick="switchToTest"
+            android:onClick="switchToMainMenu"
             android:text="@string/confirm"
             android:textSize="30sp" />
 

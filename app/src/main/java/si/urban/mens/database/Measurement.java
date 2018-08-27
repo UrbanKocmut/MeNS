@@ -22,15 +22,19 @@ public class Measurement {
 
     @ColumnInfo(name = "test_id")
     @NonNull
-    public int testId;
+    public long testId;
 
     @ColumnInfo(name = "measurement_type_id")
     @NonNull
     public int measurementTypeId;
 
-    public Measurement(int id, @NonNull int testId, @NonNull int measurementTypeId) {
+    @NonNull
+    public long timestamp;
+
+    public Measurement(int id, @NonNull long testId, @NonNull int measurementTypeId, @NonNull long timestamp) {
         this.id = id;
         this.testId = testId;
         this.measurementTypeId = measurementTypeId;
+        this.timestamp = timestamp;
     }
 }
