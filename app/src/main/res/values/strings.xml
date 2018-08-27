@@ -14,6 +14,8 @@
     <string name="test3R">6</string>
 
     <string name="done_lbl">DONE</string>
+    <string name="send_btn">SEND</string>
+    <string name="delete_btn">DELETE</string>
 
     <string name="creating_db">Creating database</string>
     <string name="title_activity_test">TestActivity</string>
