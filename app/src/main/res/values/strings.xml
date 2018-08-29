@@ -20,6 +20,10 @@
     <string name="data_btn">DATA</string>
     <string name="home_btn">HOME</string>
 
+    <string name="raw_btn">RAW</string>
+    <string name="freq_btn">FREQ.</string>
+    <string name="amp_btn">AMPL.</string>
+
     <string name="type_lbl">TYPE:</string>
     <string name="date_lvl">DATE:</string>
 

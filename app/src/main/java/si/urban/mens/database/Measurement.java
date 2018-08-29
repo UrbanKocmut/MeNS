@@ -18,6 +18,7 @@ import android.support.constraint.Constraints;
 public class Measurement {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
+//    TODO spremeni id v LONG
     public int id;
 
     @ColumnInfo(name = "test_id")

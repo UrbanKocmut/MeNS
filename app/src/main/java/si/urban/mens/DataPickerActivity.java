@@ -23,6 +23,7 @@ public class DataPickerActivity extends Activity implements DataPickerRecyclerVi
 
     private DataPickerRecyclerViewAdapter adapter;
     private AppDatabase db;
+    private Measurement[] measurements;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +37,8 @@ public class DataPickerActivity extends Activity implements DataPickerRecyclerVi
         ArrayList<LocalDateTime> dateTimes = new ArrayList<>();
 
         long testId = getSharedPreferences("shared_pref", MODE_PRIVATE).getLong("testId", -1l);
-
-        for (Measurement measurement : db.appDao().loadAllMeasurementsForTest(testId)) {
+        measurements = db.appDao().loadAllMeasurementsForTest(testId);
+        for (Measurement measurement : measurements) {
             measurementIds.add("" + measurement.id);
             dateTimes.add(LocalDateTime.ofInstant(Instant.ofEpochMilli(measurement.timestamp), TimeZone.getDefault().toZoneId()));
         }
@@ -65,13 +66,19 @@ public class DataPickerActivity extends Activity implements DataPickerRecyclerVi
 
     public void deleteElements(View view) {
         ArrayList<Integer> removed = adapter.removeSelected();
-        for (Integer index : removed) {
+        ArrayList<Measurement> forDelete = new ArrayList<>();
+        for (int i = removed.size() - 1; i >= 0; i--) {
+            forDelete.add(measurements[i]);
+            Integer index = removed.get(i);
             adapter.notifyItemRemoved(index);
         }
+        db.appDao().deleteMeasurements(forDelete);
     }
 
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, VisActivity.class);
+        intent.putExtra("measurementId", (long) measurements[position].id );
+        startActivity(intent);
     }
 }

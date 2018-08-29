@@ -12,11 +12,13 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.text.NumberFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -31,8 +33,6 @@ public class TestActivity extends Activity implements SensorEventListener {
     private Sensor gyroscope;
     TextView accelTextView;
     TextView gyroTextView;
-    ArrayList<MainActivity.DataChunk> gyroData;
-    ArrayList<MainActivity.DataChunk> acclData;
     TextView accLbl;
     TextView gyroLbl;
     long startTime;
@@ -42,12 +42,12 @@ public class TestActivity extends Activity implements SensorEventListener {
     GraphView gyroGraph;
 
     private final int MAX_DATA_POINTS = 1000;
-    LineGraphSeries<DataPoint> accXSeries;
-    LineGraphSeries<DataPoint> accYSeries;
-    LineGraphSeries<DataPoint> accZSeries;
-    LineGraphSeries<DataPoint> gyroXSeries;
-    LineGraphSeries<DataPoint> gyroYSeries;
-    LineGraphSeries<DataPoint> gyroZSeries;
+    private LineGraphSeries<DataPoint> accXSeries;
+    private LineGraphSeries<DataPoint> accYSeries;
+    private LineGraphSeries<DataPoint> accZSeries;
+    private LineGraphSeries<DataPoint> gyroXSeries;
+    private LineGraphSeries<DataPoint> gyroYSeries;
+    private LineGraphSeries<DataPoint> gyroZSeries;
 
     ArrayDeque<Reading> readings;
 
@@ -116,8 +116,16 @@ public class TestActivity extends Activity implements SensorEventListener {
         accLbl = (TextView) findViewById(R.id.activity_test_accLbl);
         gyroTextView = (TextView) findViewById(R.id.activity_test_gyroTextView);
         gyroLbl = (TextView) findViewById(R.id.activity_test_gyroLbl);
+
+
         accGraph = (GraphView) findViewById(R.id.activity_test_accGraph);
         gyroGraph = (GraphView) findViewById(R.id.activity_test_gyroGraph);
+
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumIntegerDigits(2);
+
+        accGraph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter(nf,nf));
+        gyroGraph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter(nf,nf));
 
         sp = getSharedPreferences("shared_pref", MODE_PRIVATE);
         measurementId = sp.getLong("measurementId", -1);

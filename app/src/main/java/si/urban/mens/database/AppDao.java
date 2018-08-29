@@ -54,6 +54,9 @@ public interface AppDao {
     @Delete
     public void deleteMeasurements(Measurement... measurements);
 
+    @Delete
+    public void deleteMeasurements(Collection<Measurement> measurements);
+
     //QUERIES
 
     @Query("SELECT * FROM tests")

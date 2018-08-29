@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,14 +17,14 @@ import java.util.Locale;
 
 public class DataPickerRecyclerViewAdapter extends RecyclerView.Adapter<DataPickerRecyclerViewAdapter.ViewHolder> {
 
-    private List<String> ids;
-    private List<LocalDateTime> dateTimes;
+    private ArrayList<String> ids;
+    private ArrayList<LocalDateTime> dateTimes;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     private ArrayList<Boolean> selected;
 
     // data is passed into the constructor
-    DataPickerRecyclerViewAdapter(Context context, List<String> ids,List<LocalDateTime> dateTimes) {
+    DataPickerRecyclerViewAdapter(Context context, ArrayList<String> ids,ArrayList<LocalDateTime> dateTimes) {
         this.mInflater = LayoutInflater.from(context);
         this.ids = ids;
         this.dateTimes = dateTimes;
@@ -34,21 +35,17 @@ public class DataPickerRecyclerViewAdapter extends RecyclerView.Adapter<DataPick
     }
 
     public ArrayList<Integer> removeSelected(){
-        Iterator<String> idIterator = ids.iterator();
-        Iterator<LocalDateTime> dateIterator = dateTimes.iterator();
-        Iterator<Boolean> selectedIterator = selected.iterator();
         ArrayList<Integer> deleted = new ArrayList<>();
-        int i = 0;
-        while (selectedIterator.hasNext()){
-            dateIterator.next();
-            idIterator.next();
-            if(selectedIterator.next()){
+        for (int i = 0; i < selected.size(); i++) {
+            if(selected.get(i)){
                 deleted.add(i);
-                selectedIterator.remove();
-                idIterator.remove();
-                dateIterator.remove();
             }
-            i++;
+        }
+        for (int i1 = deleted.size()-1; i1 >= 0; i1--) {
+            int i = deleted.get(i1);
+            ids.remove(i);
+            dateTimes.remove(i);
+            selected.remove(i);
         }
         return deleted;
     }
@@ -63,7 +60,7 @@ public class DataPickerRecyclerViewAdapter extends RecyclerView.Adapter<DataPick
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String id = ids.get(position);
+        String id = ""+position;
         String dateTime = dateTimes.get(position).toString();
         holder.measuremetnIdtv.setText(id);
         holder.datetv.setText(dateTime);
@@ -75,7 +72,7 @@ public class DataPickerRecyclerViewAdapter extends RecyclerView.Adapter<DataPick
         return ids.size();
     }
 
-    void updateSelected(int pos, boolean state){
+    private void updateSelected(int pos, boolean state){
         selected.set(pos,state);
     }
 
