@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.hardware.Sensor;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.Viewport;
@@ -24,6 +25,13 @@ public class VisActivity extends Activity {
 
     private Reading[] readingsAccl;
     private Reading[] readingsGyro;
+
+    private CheckBox acXcb;
+    private CheckBox acYcb;
+    private CheckBox acZcb;
+    private CheckBox gyXcb;
+    private CheckBox gyYcb;
+    private CheckBox gyZcb;
 
     private final int MAX_DATA_POINTS = 100000;
     private LineGraphSeries<DataPoint> accXSeries;
@@ -73,6 +81,14 @@ public class VisActivity extends Activity {
         accVisGraph = (GraphView) findViewById(R.id.vis_accGraph);
         gyroVisGraph = (GraphView) findViewById(R.id.vis_gyroGraph);
 
+        acXcb = (CheckBox) findViewById(R.id.acXcb);
+        acYcb = (CheckBox) findViewById(R.id.acYcb);
+        acZcb = (CheckBox) findViewById(R.id.acZcb);
+
+        gyXcb = (CheckBox) findViewById(R.id.gyXcb);
+        gyYcb = (CheckBox) findViewById(R.id.gyYcb);
+        gyZcb = (CheckBox) findViewById(R.id.gyZcb);
+
 
         long measurementId = getIntent().getLongExtra("measurementId", -1);
         if (measurementId == -1) {
@@ -90,24 +106,25 @@ public class VisActivity extends Activity {
 
     }
 
-    public void drawRaw(View view){
+    public void drawRaw(View view) {
         initGraphs();
         fillGraphsRaw();
         addSeries();
     }
 
-    public void drawFreq(View view){
+    public void drawFreq(View view) {
         initGraphs();
         fillGraphsFreq();
         addSeries();
     }
-    public void drawAmp(View view){
+
+    public void drawAmp(View view) {
         initGraphs();
         fillGraphsAmp();
         addSeries();
     }
 
-    private void addSeries(){
+    private void addSeries() {
         accVisGraph.addSeries(accXSeries);
         accVisGraph.addSeries(accYSeries);
         accVisGraph.addSeries(accZSeries);
@@ -122,103 +139,133 @@ public class VisActivity extends Activity {
         for (int i = 0, readingsAcclLength = readingsAccl.length; i < readingsAcclLength; i++) {
             Reading reading = readingsAccl[i];
             double timestamp = (reading.timestamp - startTime) / 1000d;
-            accXSeries.appendData(new DataPoint(i, reading.X), false, MAX_DATA_POINTS);
-            accYSeries.appendData(new DataPoint(i, reading.Y), false, MAX_DATA_POINTS);
-            accZSeries.appendData(new DataPoint(i, reading.Z), false, MAX_DATA_POINTS);
+            if (acXcb.isChecked())
+                accXSeries.appendData(new DataPoint(i, reading.X), false, MAX_DATA_POINTS);
+            if (acYcb.isChecked())
+                accYSeries.appendData(new DataPoint(i, reading.Y), false, MAX_DATA_POINTS);
+            if (acZcb.isChecked())
+                accZSeries.appendData(new DataPoint(i, reading.Z), false, MAX_DATA_POINTS);
         }
         startTime = readingsGyro[0].timestamp;
         for (int i = 0, readingsGyroLength = readingsGyro.length; i < readingsGyroLength; i++) {
             Reading reading = readingsGyro[i];
             double timestamp = (reading.timestamp - startTime) / 1000d;
-            gyroXSeries.appendData(new DataPoint(i, reading.X), false, MAX_DATA_POINTS);
-            gyroYSeries.appendData(new DataPoint(i, reading.Y), false, MAX_DATA_POINTS);
-            gyroZSeries.appendData(new DataPoint(i, reading.Z), false, MAX_DATA_POINTS);
+            if (gyXcb.isChecked())
+                gyroXSeries.appendData(new DataPoint(i, reading.X), false, MAX_DATA_POINTS);
+            if (gyYcb.isChecked())
+                gyroYSeries.appendData(new DataPoint(i, reading.Y), false, MAX_DATA_POINTS);
+            if (gyZcb.isChecked())
+                gyroZSeries.appendData(new DataPoint(i, reading.Z), false, MAX_DATA_POINTS);
         }
     }
 
     private void fillGraphsFreq() {
         Analyzer analyzerAccl = new Analyzer(readingsAccl);
         Analyzer analyzerGyro = new Analyzer(readingsGyro);
+        ArrayList<Double> values;
 
-        ArrayList<Double> values = analyzerAccl.getValuesFreqX();
-        for (int i = 0; i < values.size(); i++) {
-            Double val = values.get(i);
-            double time = i * (Analyzer.SAMPLE_WIDTH/1000d);
-            accXSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+        if (acXcb.isChecked()) {
+            values = analyzerAccl.getValuesFreqX();
+            for (int i = 0; i < values.size(); i++) {
+                Double val = values.get(i);
+                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
+                accXSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+            }
         }
-        values = analyzerAccl.getValuesFreqY();
-        for (int i = 0; i < values.size(); i++) {
-            Double val = values.get(i);
-            double time = i * (Analyzer.SAMPLE_WIDTH/1000d);
-            accYSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+        if (acYcb.isChecked()) {
+            values = analyzerAccl.getValuesFreqY();
+            for (int i = 0; i < values.size(); i++) {
+                Double val = values.get(i);
+                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
+                accYSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+            }
         }
-        values = analyzerAccl.getValuesFreqZ();
-        for (int i = 0; i < values.size(); i++) {
-            Double val = values.get(i);
-            double time = i * (Analyzer.SAMPLE_WIDTH/1000d);
-            accZSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+        if (acZcb.isChecked()) {
+            values = analyzerAccl.getValuesFreqZ();
+            for (int i = 0; i < values.size(); i++) {
+                Double val = values.get(i);
+                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
+                accZSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+            }
         }
-
-        values = analyzerGyro.getValuesFreqX();
-        for (int i = 0; i < values.size(); i++) {
-            Double val = values.get(i);
-            double time = i * (Analyzer.SAMPLE_WIDTH/1000d);
-            gyroXSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+        if (gyXcb.isChecked()) {
+            values = analyzerGyro.getValuesFreqX();
+            for (int i = 0; i < values.size(); i++) {
+                Double val = values.get(i);
+                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
+                gyroXSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+            }
         }
-        values = analyzerGyro.getValuesFreqY();
-        for (int i = 0; i < values.size(); i++) {
-            Double val = values.get(i);
-            double time = i * (Analyzer.SAMPLE_WIDTH/1000d);
-            gyroYSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+        if (gyYcb.isChecked()) {
+            values = analyzerGyro.getValuesFreqY();
+            for (int i = 0; i < values.size(); i++) {
+                Double val = values.get(i);
+                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
+                gyroYSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+            }
         }
-        values = analyzerGyro.getValuesFreqZ();
-        for (int i = 0; i < values.size(); i++) {
-            Double val = values.get(i);
-            double time = i * (Analyzer.SAMPLE_WIDTH/1000d);
-            gyroZSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+        if (gyZcb.isChecked()) {
+            values = analyzerGyro.getValuesFreqZ();
+            for (int i = 0; i < values.size(); i++) {
+                Double val = values.get(i);
+                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
+                gyroZSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+            }
         }
     }
 
     private void fillGraphsAmp() {
         Analyzer analyzerAccl = new Analyzer(readingsAccl);
         Analyzer analyzerGyro = new Analyzer(readingsGyro);
+        ArrayList<Double> values;
 
-        ArrayList<Double> values = analyzerAccl.getValuesAmpX();
-        for (int i = 0; i < values.size(); i++) {
-            Double val = values.get(i);
-            double time = i * (Analyzer.SAMPLE_WIDTH/1000d);
-            accXSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+        if (acXcb.isChecked()) {
+            values = analyzerAccl.getValuesAmpX();
+            for (int i = 0; i < values.size(); i++) {
+                Double val = values.get(i);
+                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
+                accXSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+            }
         }
-        values = analyzerAccl.getValuesAmpY();
-        for (int i = 0; i < values.size(); i++) {
-            Double val = values.get(i);
-            double time = i * (Analyzer.SAMPLE_WIDTH/1000d);
-            accYSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+        if (acYcb.isChecked()) {
+            values = analyzerAccl.getValuesAmpY();
+            for (int i = 0; i < values.size(); i++) {
+                Double val = values.get(i);
+                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
+                accYSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+            }
         }
-        values = analyzerAccl.getValuesAmpZ();
-        for (int i = 0; i < values.size(); i++) {
-            Double val = values.get(i);
-            double time = i * (Analyzer.SAMPLE_WIDTH/1000d);
-            accZSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+        if (acZcb.isChecked()) {
+            values = analyzerAccl.getValuesAmpZ();
+            for (int i = 0; i < values.size(); i++) {
+                Double val = values.get(i);
+                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
+                accZSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+            }
         }
-
-        values = analyzerGyro.getValuesAmpX();
-        for (int i = 0; i < values.size(); i++) {
-            Double val = values.get(i);
-            double time = i * (Analyzer.SAMPLE_WIDTH/1000d);
-            gyroXSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+        if (gyXcb.isChecked()) {
+            values = analyzerGyro.getValuesAmpX();
+            for (int i = 0; i < values.size(); i++) {
+                Double val = values.get(i);
+                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
+                gyroXSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+            }
         }
-        values = analyzerGyro.getValuesAmpY();
-        for (int i = 0; i < values.size(); i++) {
-            Double val = values.get(i);
-            double time = i * (Analyzer.SAMPLE_WIDTH/1000d);
-            gyroYSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+        if (gyYcb.isChecked()) {
+            values = analyzerGyro.getValuesAmpY();
+            for (int i = 0; i < values.size(); i++) {
+                Double val = values.get(i);
+                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
+                gyroYSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+            }
         }
-        values = analyzerGyro.getValuesAmpZ();
-        for (int i = 0; i < values.size(); i++) {
-            Double val = values.get(i);
-            double time = i * (Analyzer.SAMPLE_WIDTH/1000d);
-            gyroZSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+        if (gyZcb.isChecked()) {
+            values = analyzerGyro.getValuesAmpZ();
+            for (int i = 0; i < values.size(); i++) {
+                Double val = values.get(i);
+                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
+                gyroZSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+            }
         }
     }
 }

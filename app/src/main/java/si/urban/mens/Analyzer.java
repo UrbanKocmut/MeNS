@@ -9,7 +9,7 @@ public class Analyzer {
     private Reading[] readings;
     private ArrayList<Double> valuesFreq;
     private ArrayList<Double> valuesAmp;
-    public static final int SAMPLE_WIDTH = 500;//100ms
+    public static final int SAMPLE_WIDTH = 1000;//100ms
 
     /**
      * Readings have to be prefildered for sensorType and axis.
