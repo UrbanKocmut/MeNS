@@ -48,6 +48,7 @@ public class PinActivity extends Activity {
         AppDatabase db = AppDatabase.getInstance(getApplicationContext());
         Test test = new Test(Integer.valueOf(PIN),System.currentTimeMillis());
         db.appDao().insertTests(test);
+        AppDatabase.fillDatabase();
         SharedPreferences.Editor editor = getSharedPreferences("shared_pref",MODE_PRIVATE).edit();
         editor.putLong("testId",Integer.valueOf(PIN));
         editor.apply();

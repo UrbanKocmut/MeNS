@@ -11,6 +11,11 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,10 +23,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import java.sql.*;
 
-import com.mysql.cj.jdbc.Driver;
-import com.mysql.jdbc.*;
 
 import si.urban.mens.database.AppDatabase;
 import si.urban.mens.database.Measurement;
