@@ -19,24 +19,31 @@ public class TestPickerActivity extends Activity {
 
     public void switchToTest(View view) {
         int measurementTypeId = 0;
+        int hand = 0;
         switch (view.getId()){
             case R.id.test1Lbtn:
                 measurementTypeId = 0;
+                hand = 0;
                 break;
             case R.id.test1Rbtn:
-                measurementTypeId = 1;
+                measurementTypeId = 0;
+                hand = 1;
                 break;
             case R.id.test2Lbtn:
-                measurementTypeId = 2;
+                measurementTypeId = 1;
+                hand = 0;
                 break;
             case R.id.test2Rbtn:
-                measurementTypeId = 3;
+                measurementTypeId = 1;
+                hand = 1;
                 break;
             case R.id.test3Lbtn:
-                measurementTypeId = 4;
+                measurementTypeId = 2;
+                hand = 0;
                 break;
             case R.id.test3Rbtn:
-                measurementTypeId = 5;
+                measurementTypeId = 2;
+                hand = 1;
                 break;
         }
         SharedPreferences sp = getSharedPreferences("shared_pref",MODE_PRIVATE);
@@ -44,7 +51,7 @@ public class TestPickerActivity extends Activity {
         if(testId == -1){
             throw new RuntimeException("NO TEST ID");
         }
-        Measurement measurement = new Measurement(0,testId,measurementTypeId,System.currentTimeMillis());
+        Measurement measurement = new Measurement(0,testId,measurementTypeId,System.currentTimeMillis(),hand);
 
         AppDatabase db = AppDatabase.getInstance(getApplicationContext());
         long measurementId = db.appDao().insertMeasurement(measurement);

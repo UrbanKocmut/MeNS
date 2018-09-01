@@ -7,8 +7,8 @@
     tools:context=".MainMenuActivity">
 
     <LinearLayout
-        android:layout_width="344dp"
-        android:layout_height="576dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,7 +18,7 @@
         <Button
             android:id="@+id/startbtn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="SwitchToTest"
             android:text="@string/start_btn"
@@ -27,10 +27,19 @@
         <Button
             android:id="@+id/databtn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="SwitchToDataPicker"
             android:text="@string/data_btn"
             android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/settingsbtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/settings_btn"
+            android:textSize="30sp"
+            android:visibility="visible" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

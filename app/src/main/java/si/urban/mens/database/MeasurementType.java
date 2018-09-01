@@ -25,12 +25,9 @@ public class MeasurementType {
 
     public static MeasurementType[] populateData() {
         return new MeasurementType[] {
-                new MeasurementType(0, "Test1L"),
-                new MeasurementType(1, "Test1R"),
-                new MeasurementType(2, "Test2L"),
-                new MeasurementType(3, "Test2R"),
-                new MeasurementType(4, "Test3L"),
-                new MeasurementType(5, "Test3R")
+                new MeasurementType(0, "Test1"),
+                new MeasurementType(1, "Test2"),
+                new MeasurementType(2, "Test3"),
         };
     }
 

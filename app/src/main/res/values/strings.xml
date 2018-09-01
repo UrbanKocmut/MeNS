@@ -24,6 +24,15 @@
     <string name="freq_btn">FREQ.</string>
     <string name="amp_btn">AMPL.</string>
 
+    <string name="settings_btn">SETTINGS</string>
+
+    <string name="cancel_btn">CANCEL</string>
+    <string name="db_ip">Database IP:</string>
+    <string name="db_port">Database PORT:</string>
+    <string name="db_username">Database username:</string>
+    <string name="db_passwd">Database passwd:</string>
+    <string name="db_scheme">Database scheme:</string>
+
     <string name="type_lbl">TYPE:</string>
     <string name="date_lvl">DATE:</string>
 

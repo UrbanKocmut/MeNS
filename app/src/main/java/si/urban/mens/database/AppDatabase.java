@@ -11,7 +11,7 @@ import android.support.annotation.NonNull;
 import java.util.concurrent.Executors;
 
 @Database(entities = {Measurement.class, MeasurementType.class, Reading.class, SensorType.class, Test.class},
-        version = 3)
+        version = 4)
 public abstract class AppDatabase extends RoomDatabase{
     public abstract AppDao appDao();
 

@@ -32,10 +32,15 @@ public class Measurement {
     @NonNull
     public long timestamp;
 
-    public Measurement(int id, @NonNull long testId, @NonNull int measurementTypeId, @NonNull long timestamp) {
+    @ColumnInfo(name = "hand")
+    @NonNull
+    public int hand;
+
+    public Measurement(int id, @NonNull long testId, @NonNull int measurementTypeId, @NonNull long timestamp, @NonNull int hand) {
         this.id = id;
         this.testId = testId;
         this.measurementTypeId = measurementTypeId;
         this.timestamp = timestamp;
+        this.hand = hand;
     }
 }

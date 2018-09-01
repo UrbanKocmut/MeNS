@@ -27,7 +27,8 @@
             android:theme="@style/FullscreenTheme" />
         <activity android:name=".DataPickerActivity" />
         <activity android:name=".MainMenuActivity" />
-        <activity android:name=".VisActivity"></activity>
+        <activity android:name=".VisActivity" />
+        <activity android:name=".SettingsActivity"></activity>
     </application>
 
 </manifest>

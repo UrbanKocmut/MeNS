@@ -50,6 +50,22 @@ public class DataPickerRecyclerViewAdapter extends RecyclerView.Adapter<DataPick
         return deleted;
     }
 
+    public ArrayList<Integer> returnSelected(){
+        ArrayList<Integer> ret = new ArrayList<>();
+        for (int i = 0; i < selected.size(); i++) {
+            boolean el = selected.get(i);
+            if (el)
+                ret.add(i);
+        } ;
+        return ret;
+    }
+
+    public void deselect(ArrayList<Integer> positions){
+        for (int pos: positions) {
+            selected.set(pos,false);
+        }
+    }
+
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
