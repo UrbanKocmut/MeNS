@@ -45,7 +45,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:onClick="switchToMainMenu"
-                android:text="@string/home_btn" />
+                android:text="@string/back_btn" />
 
             <Button
                 android:id="@+id/deletebtn"

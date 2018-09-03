@@ -125,6 +125,13 @@
                 android:layout_weight="1"
                 android:onClick="drawAmp"
                 android:text="@string/amp_btn" />
+
+            <Button
+                android:id="@+id/vis_backbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="switchToDataPicker"
+                android:text="@string/back_btn" />
         </TableRow>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

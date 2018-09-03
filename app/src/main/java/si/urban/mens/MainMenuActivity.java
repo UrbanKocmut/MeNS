@@ -18,6 +18,8 @@ public class MainMenuActivity extends Activity {
         long testId = sp.getLong("testId",-1l);
         if(testId == 2390){
             ((Button) findViewById(R.id.settingsbtn)).setVisibility(View.VISIBLE);
+        } else {
+            ((Button) findViewById(R.id.settingsbtn)).setVisibility(View.GONE);
         }
 
     }

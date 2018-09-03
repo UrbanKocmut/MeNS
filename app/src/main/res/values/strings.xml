@@ -16,6 +16,7 @@
     <string name="done_lbl">DONE</string>
     <string name="send_btn">SEND</string>
     <string name="delete_btn">DELETE</string>
+    <string name="back_btn">BACK</string>
 
     <string name="data_btn">DATA</string>
     <string name="home_btn">HOME</string>

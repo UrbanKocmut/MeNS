@@ -1,6 +1,7 @@
 package si.urban.mens;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.os.Bundle;
@@ -268,4 +269,10 @@ public class VisActivity extends Activity {
             }
         }
     }
+
+    public void switchToDataPicker(View view) {
+        Intent intent = new Intent(this, DataPickerActivity.class);
+        startActivity(intent);
+    }
+
 }
