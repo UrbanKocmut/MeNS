@@ -34,7 +34,7 @@ public class VisActivity extends Activity {
     private CheckBox gyYcb;
     private CheckBox gyZcb;
 
-    private final int MAX_DATA_POINTS = 100000;
+    private final int MAX_DATA_POINTS = 1000000;
     private LineGraphSeries<DataPoint> accXSeries;
     private LineGraphSeries<DataPoint> accYSeries;
     private LineGraphSeries<DataPoint> accZSeries;
@@ -65,11 +65,11 @@ public class VisActivity extends Activity {
 
         Viewport vpa = accVisGraph.getViewport();
         vpa.setScalable(true);
-        vpa.setScalableY(true);
+        vpa.setScrollable(true);
 
         Viewport vpg = gyroVisGraph.getViewport();
         vpg.setScalable(true);
-        vpg.setScalableY(true);
+        vpg.setScrollable(true);
 
     }
 
@@ -107,8 +107,46 @@ public class VisActivity extends Activity {
 
     }
 
+    private void setScale(){
+        accVisGraph.getViewport().setMinX(2);
+        accVisGraph.getViewport().setMaxX(30);
+        accVisGraph.getViewport().setMinY(0);
+        accVisGraph.getViewport().setMaxY(10);
+
+        accVisGraph.getViewport().setXAxisBoundsManual(true);
+        accVisGraph.getViewport().setYAxisBoundsManual(true);
+        accVisGraph.getViewport().setScalable(false);
+        accVisGraph.getViewport().setScrollable(false);
+
+        gyroVisGraph.getViewport().setMinX(2);
+        gyroVisGraph.getViewport().setMaxX(30);
+        gyroVisGraph.getViewport().setMinY(0);
+        gyroVisGraph.getViewport().setMaxY(10);
+
+        gyroVisGraph.getViewport().setXAxisBoundsManual(true);
+        gyroVisGraph.getViewport().setYAxisBoundsManual(true);
+        gyroVisGraph.getViewport().setScrollable(false);
+        gyroVisGraph.getViewport().setScalable(false);
+    }
+
+    private void setScaleAuto(){
+
+        accVisGraph.getViewport().setXAxisBoundsManual(false);
+        accVisGraph.getViewport().setYAxisBoundsManual(false);
+        accVisGraph.getViewport().setScalable(true);
+        accVisGraph.getViewport().setScalableY(true);
+
+
+        gyroVisGraph.getViewport().setXAxisBoundsManual(false);
+        gyroVisGraph.getViewport().setYAxisBoundsManual(false);
+        gyroVisGraph.getViewport().setScrollable(true);
+        gyroVisGraph.getViewport().setScalableY(true);
+
+    }
+
     public void drawRaw(View view) {
         initGraphs();
+        setScaleAuto();
         fillGraphsRaw();
         addSeries();
     }
@@ -117,10 +155,12 @@ public class VisActivity extends Activity {
         initGraphs();
         fillGraphsFreq();
         addSeries();
+        setScale();
     }
 
     public void drawAmp(View view) {
         initGraphs();
+        setScaleAuto();
         fillGraphsAmp();
         addSeries();
     }
@@ -169,48 +209,42 @@ public class VisActivity extends Activity {
             values = analyzerAccl.getValuesFreqX();
             for (int i = 0; i < values.size(); i++) {
                 Double val = values.get(i);
-                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
-                accXSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+                accXSeries.appendData(new DataPoint(i / 10d, val), false, MAX_DATA_POINTS);
             }
         }
         if (acYcb.isChecked()) {
             values = analyzerAccl.getValuesFreqY();
             for (int i = 0; i < values.size(); i++) {
                 Double val = values.get(i);
-                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
-                accYSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+                accYSeries.appendData(new DataPoint(i / 10d, val), false, MAX_DATA_POINTS);
             }
         }
         if (acZcb.isChecked()) {
             values = analyzerAccl.getValuesFreqZ();
             for (int i = 0; i < values.size(); i++) {
                 Double val = values.get(i);
-                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
-                accZSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+                accZSeries.appendData(new DataPoint(i / 10d, val), false, MAX_DATA_POINTS);
             }
         }
         if (gyXcb.isChecked()) {
             values = analyzerGyro.getValuesFreqX();
             for (int i = 0; i < values.size(); i++) {
                 Double val = values.get(i);
-                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
-                gyroXSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+                gyroXSeries.appendData(new DataPoint(i / 10d, val), false, MAX_DATA_POINTS);
             }
         }
         if (gyYcb.isChecked()) {
             values = analyzerGyro.getValuesFreqY();
             for (int i = 0; i < values.size(); i++) {
                 Double val = values.get(i);
-                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
-                gyroYSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+                gyroYSeries.appendData(new DataPoint(i / 10d, val), false, MAX_DATA_POINTS);
             }
         }
         if (gyZcb.isChecked()) {
             values = analyzerGyro.getValuesFreqZ();
             for (int i = 0; i < values.size(); i++) {
                 Double val = values.get(i);
-                double time = i * (Analyzer.SAMPLE_WIDTH / 1000d);
-                gyroZSeries.appendData(new DataPoint(i, val), false, MAX_DATA_POINTS);
+                gyroZSeries.appendData(new DataPoint(i / 10d, val), false, MAX_DATA_POINTS);
             }
         }
     }

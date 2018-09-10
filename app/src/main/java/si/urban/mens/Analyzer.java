@@ -1,5 +1,7 @@
 package si.urban.mens;
 
+import org.jtransforms.fft.DoubleFFT_1D;
+
 import java.util.ArrayList;
 
 import si.urban.mens.database.Reading;
@@ -20,6 +22,47 @@ public class Analyzer {
         this.readings = readings;
         valuesFreq = new ArrayList<>();
         valuesAmp = new ArrayList<>();
+    }
+
+    private void calSpectralDensityX(){
+        valuesFreq = new ArrayList<>();
+        double [] data = new double [readings.length];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (double)readings[i].X;
+        }
+        DoubleFFT_1D df1 = new DoubleFFT_1D(readings.length/2);
+        df1.realForwardFull(data);
+        for (double d : data) {
+            valuesFreq.add((d*d)/100000);
+        }
+    }
+
+    private void calSpectralDensityY(){
+        valuesFreq = new ArrayList<>();
+        double [] data = new double [readings.length];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (double)readings[i].Y;
+        }
+        DoubleFFT_1D df1 = new DoubleFFT_1D(readings.length/2);
+        df1.realForwardFull(data);
+        for (double d : data) {
+            valuesFreq.add((d*d)/100000);
+
+        }
+    }
+
+    private void calSpectralDensityZ(){
+        valuesFreq = new ArrayList<>();
+        double [] data = new double [readings.length];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (double)readings[i].Z;
+        }
+        DoubleFFT_1D df1 = new DoubleFFT_1D(readings.length/2);
+        df1.realForwardFull(data);
+        for (double d : data) {
+            valuesFreq.add((d*d)/100000);
+
+        }
     }
 
     private void calculateFrequencyX() {
@@ -143,17 +186,17 @@ public class Analyzer {
     }
 
     public ArrayList<Double> getValuesFreqX() {
-        calculateFrequencyX();
+        calSpectralDensityX();
         return valuesFreq;
     }
 
     public ArrayList<Double> getValuesFreqY() {
-        calculateFrequencyY();
+        calSpectralDensityY();
         return valuesFreq;
     }
 
     public ArrayList<Double> getValuesFreqZ() {
-        calculateFrequencyZ();
+        calSpectralDensityZ();
         return valuesFreq;
     }
 
