@@ -15,6 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import si.urban.mens.database.AppDatabase;
+import si.urban.mens.database.Measurement;
+import si.urban.mens.database.MeasurementType;
+
 public class DataPickerRecyclerViewAdapter extends RecyclerView.Adapter<DataPickerRecyclerViewAdapter.ViewHolder> {
 
     private ArrayList<String> ids;
@@ -22,6 +26,7 @@ public class DataPickerRecyclerViewAdapter extends RecyclerView.Adapter<DataPick
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
     private ArrayList<Boolean> selected;
+    private AppDatabase db;
 
     // data is passed into the constructor
     DataPickerRecyclerViewAdapter(Context context, ArrayList<String> ids,ArrayList<LocalDateTime> dateTimes) {
@@ -32,6 +37,7 @@ public class DataPickerRecyclerViewAdapter extends RecyclerView.Adapter<DataPick
         for (int i = 0; i < ids.size(); i++) {
             selected.add(false);
         }
+        this.db = AppDatabase.getInstance(context);
     }
 
     public ArrayList<Integer> removeSelected(){
@@ -76,7 +82,8 @@ public class DataPickerRecyclerViewAdapter extends RecyclerView.Adapter<DataPick
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        String id = ""+position;
+        Measurement measurement = db.appDao().loadMeasurementForId(Long.valueOf(ids.get(position)));
+        String id = ""+measurement.measurementTypeId;
         String dateTime = dateTimes.get(position).toString();
         holder.measuremetnIdtv.setText(id);
         holder.datetv.setText(dateTime);

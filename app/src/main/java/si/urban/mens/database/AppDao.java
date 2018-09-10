@@ -62,6 +62,12 @@ public interface AppDao {
     @Query("SELECT * FROM tests")
     public Test[] loadAllTests();
 
+    @Query("SELECT * FROM measurement_types WHERE id == :Id")
+    public MeasurementType loadMeasurementTypeForId(long Id);
+
+    @Query("SELECT * FROM measurements WHERE id == :Id")
+    public Measurement loadMeasurementForId(long Id);
+
     @Query("SELECT * FROM measurements WHERE test_id == :testId")
     public Measurement[] loadAllMeasurementsForTest(long testId);
 
