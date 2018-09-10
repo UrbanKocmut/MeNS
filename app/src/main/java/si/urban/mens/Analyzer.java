@@ -30,10 +30,11 @@ public class Analyzer {
         for (int i = 0; i < data.length; i++) {
             data[i] = (double)readings[i].X;
         }
-        DoubleFFT_1D df1 = new DoubleFFT_1D(readings.length/2);
+        DoubleFFT_1D df1 = new DoubleFFT_1D(100);
         df1.realForwardFull(data);
         for (double d : data) {
-            valuesFreq.add((d*d)/100000);
+            valuesFreq.add(d*d);
+
         }
     }
 
@@ -43,10 +44,10 @@ public class Analyzer {
         for (int i = 0; i < data.length; i++) {
             data[i] = (double)readings[i].Y;
         }
-        DoubleFFT_1D df1 = new DoubleFFT_1D(readings.length/2);
+        DoubleFFT_1D df1 = new DoubleFFT_1D(100);
         df1.realForwardFull(data);
         for (double d : data) {
-            valuesFreq.add((d*d)/100000);
+            valuesFreq.add((d*d));
 
         }
     }
@@ -57,10 +58,10 @@ public class Analyzer {
         for (int i = 0; i < data.length; i++) {
             data[i] = (double)readings[i].Z;
         }
-        DoubleFFT_1D df1 = new DoubleFFT_1D(readings.length/2);
+        DoubleFFT_1D df1 = new DoubleFFT_1D(100);
         df1.realForwardFull(data);
         for (double d : data) {
-            valuesFreq.add((d*d)/100000);
+            valuesFreq.add((d*d));
 
         }
     }
